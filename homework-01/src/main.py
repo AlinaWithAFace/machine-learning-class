@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import sys
 import pandas
 
@@ -12,7 +14,7 @@ to-print:{yes,no}
 # print(input_string)
 # inputs = input_string.split(" ")
 
-print(sys.argv)
+#print(sys.argv)
 
 L = sys.argv[1]
 K = sys.argv[2]
@@ -33,9 +35,34 @@ else:
     print("to-print must be 'yes' or 'no', printing anyway")
     to_print = True
 
-print("L: {}".format(L))
-print("K: {}".format(K))
-print("Training Set: \n{}".format(training_set))
-print("Validation Set: \n{}".format(validation_set))
-print("Test Set: \n{}".format(test_set))
-print("To Print: {}".format(str(to_print)))
+def node_formation(df):
+    # recursive function which drills down until a pure node is returned
+
+    count_01 = {}
+    for attribute in df.loc[:, df.columns != 'Class']:
+        zeros = (df[attribute] == 0).sum()
+        ones = (df[attribute] == 1).sum()
+        count_01[attribute] = (zeros, ones)
+
+    # Send dictionary to for variance comparison
+    # That returns the attribute to form a node on ... the lowest value?
+
+    # If value was greate than 0:
+    #    node_formation(df[df[returned_attribute] == 0])
+    #    node_formation(df[df[returned_attribute] == 1])
+
+    # If value was 0, set as pure_node with outcome
+
+    return {pure_node: outcome}
+    # pure_node is an attribute "X_"
+    # outcome is 0 or 1
+
+
+node_formation(training_set)
+
+#print("L: {}".format(L))
+#print("K: {}".format(K))
+#print("Training Set: \n{}".format(training_set))
+#print("Validation Set: \n{}".format(validation_set))
+#print("Test Set: \n{}".format(test_set))
+#print("To Print: {}".format(str(to_print)))
