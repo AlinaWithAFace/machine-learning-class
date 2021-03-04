@@ -41,7 +41,7 @@ def node_formation(df):
     # no promises, but I think this recursive structure should work
 
     count_01 = {}
-    # dictionary for attributes with counts as tuples (0, 1, sum)
+    # dictionary for attributes with counts as tuples (0, 1)
     for attribute in df.loc[:, df.columns != ('Class' or '' or 'None')]:
         # loops over all attributes not identified as Class, the outcome
         zeros = (df[attribute] == 0).sum() # Turns df in True/False
@@ -53,6 +53,7 @@ def node_formation(df):
 
     if min_variance[1] > 0:
         branch_0 = node_formation(df[df[min_variance[0]] == 0].drop([min_variance[0]], axis=1))
+        # filters df by attribute value and drops the named attribute
         branch_1 = node_formation(df[df[min_variance[0]] == 1].drop([min_variance[0]], axis=1))
         return {min_variance[0]: {0: branch_0, 1: branch_1}}
         
