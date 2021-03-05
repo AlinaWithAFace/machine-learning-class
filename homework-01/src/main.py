@@ -88,6 +88,21 @@ def variance_impurity_gain(data, split_attribute_name, target_attribute_name): #
     #variance_impurity_gain = total_variance_impurity - weighted_variance_impurity
     #return variance_impurity_gain
 
+    
+def compute_entropy(probablities):
+    #import math
+    #sum_of_probablities = 0;
+    #for prob in probablities:
+    #    sum_of_probablities += -prob*math.log(prob, 2)
+    #return sum_of_probablities
+    
+def compute_entropy_list(list):
+    #wrok in progress
+    
+def compute_information_gain(data, split_attribute_name, target_attribute_name):
+    #work in progress
+    
+        
     # I attempted to rework the formula with the data that comes from node_formation
     # Please double check my math - Alexa
     # Spoiler, it isn't correct
