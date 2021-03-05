@@ -4,17 +4,15 @@ import sys
 import pandas
 
 """
+Parse Input, expected arguments take this form:
+
 .\program <L> <K> <training-set> <validation-set> <test-set> <to-print>
 L: integer (used in the post-pruning algorithm)
 K: integer (used in the post-pruning algorithm)
 to-print:{yes,no}
 """
 
-# input_string = ['D:/_PROJECTS/machine-learning-class/homework-01/src/main.py', '2', '5', 'training_set.csv', 'validation_set.csv', 'test_set.csv', 'yes']
-# print(input_string)
-# inputs = input_string.split(" ")
-
-#print(sys.argv)
+# print(sys.argv)
 
 L = sys.argv[1]
 K = sys.argv[2]
@@ -35,6 +33,25 @@ else:
     print("to-print must be 'yes' or 'no', printing anyway")
     to_print = True
 
+if to_print:
+    print("Received Input:")
+    print("L: {}".format(L))
+    print("K: {}".format(K))
+    print("Training Set: \n{}".format(training_set))
+    print("Validation Set: \n{}".format(validation_set))
+    print("Test Set: \n{}".format(test_set))
+    print("To Print: {}".format(str(to_print)))
+
+"""
+All of the inputs are saved to
+ - L
+ - K
+ - training_set
+ - validation_set
+ - test_set
+ _ to_print
+"""
+
 
 def node_formation(df):
     # recursive function which drills down until a pure node is returned
@@ -45,7 +62,7 @@ def node_formation(df):
     # This creates the elements, counts, feel free to pop out
     for attribute in df.loc[:, df.columns != ('Class' or '' or 'None')]:
         # loops over all attributes not identified as Class, the outcome
-        zeros = (df[attribute] == 0).sum() # Turns df in True/False
+        zeros = (df[attribute] == 0).sum()  # Turns df in True/False
         ones = (df[attribute] == 1).sum()
         count_01[attribute] = (zeros, ones)
         # TODO: Can use this formula to get varience of Class
@@ -59,8 +76,8 @@ def node_formation(df):
         # filters df by attribute value and drops the named attribute
         branch_1 = node_formation(df[df[min_variance[0]] == 1].drop([min_variance[0]], axis=1))
         return {min_variance[0]: {0: branch_0, 1: branch_1}}
-        
-    else: # value was 0, set as pure_node with outcome
+
+    else:  # value was 0, set as pure_node with outcome
         return {min_variance[0]: {Value: 'Class', 'Class': Outcome}}
         # TODO: need a way to capture the value and class outcome
         # pure_node is an attribute "X_"
@@ -68,48 +85,55 @@ def node_formation(df):
 
 
 def calculate_variance(target_values):
-    #values = list(target_values)
-    ##elements,counts = #here we need a function that assigns to "element" the lists of our elements X_i
-                      #and to "counts" the pair [number of 0s in X_i, number of 1s in X_i]
-    #counts = [values.count(0),values.count(1)]
-    ##in the end I don't think we need the "elements" part, since everything is either 0 or 1
-    #variance_impurity = 0
-    #sum_counts = sum(counts)
-    #for i in elements:
-     #   variance_impurity += (-counts[i]/sum_counts*(counts[i]/sum_counts))
-        
-def variance_impurity_gain(data, split_attribute_name, target_attribute_name): #please dounble check if I used the lambda in the right way!
-    
-    #data_split = data.groupby(split_attribute_name)
-    #aggregated_data = data_split.agg({target_attribute_name : [calculate_variance, lambda x: len(x)/(len(data.index) * 1.0)] })[target_attribute_name]
-    #aggregated_data.columns = ['Variance', 'Observations']
-    #weighted_variance_impurity = sum( aggregated_data['Variance'] * aggregated_data['Observations'] )
-    #total_variance_impurity = calculate_variance(data[target_attribute_name])
-    #variance_impurity_gain = total_variance_impurity - weighted_variance_impurity
-    #return variance_impurity_gain
 
-    
+
+# values = list(target_values)
+##elements,counts = #here we need a function that assigns to "element" the lists of our elements X_i
+# and to "counts" the pair [number of 0s in X_i, number of 1s in X_i]
+# counts = [values.count(0),values.count(1)]
+##in the end I don't think we need the "elements" part, since everything is either 0 or 1
+# variance_impurity = 0
+# sum_counts = sum(counts)
+# for i in elements:
+#   variance_impurity += (-counts[i]/sum_counts*(counts[i]/sum_counts))
+
+def variance_impurity_gain(data, split_attribute_name,
+                           target_attribute_name):  # please dounble check if I used the lambda in the right way!
+
+
+# data_split = data.groupby(split_attribute_name)
+# aggregated_data = data_split.agg({target_attribute_name : [calculate_variance, lambda x: len(x)/(len(data.index) * 1.0)] })[target_attribute_name]
+# aggregated_data.columns = ['Variance', 'Observations']
+# weighted_variance_impurity = sum( aggregated_data['Variance'] * aggregated_data['Observations'] )
+# total_variance_impurity = calculate_variance(data[target_attribute_name])
+# variance_impurity_gain = total_variance_impurity - weighted_variance_impurity
+# return variance_impurity_gain
+
+
 def compute_entropy(probablities):
-    #import math
-    #sum_of_probablities = 0;
-    #for prob in probablities:
-    #    sum_of_probablities += -prob*math.log(prob, 2)
-    #return sum_of_probablities
-    
+
+
+# import math
+# sum_of_probablities = 0;
+# for prob in probablities:
+#    sum_of_probablities += -prob*math.log(prob, 2)
+# return sum_of_probablities
+
 def compute_entropy_list(list):
-    #wrok in progress
-    
+
+
+# wrok in progress
+
 def compute_information_gain(data, split_attribute_name, target_attribute_name):
-    #work in progress
-    
-        
+    # work in progress
+
     # I attempted to rework the formula with the data that comes from node_formation
     # Please double check my math - Alexa
     # Spoiler, it isn't correct
 
     min_impurity = ('NotMe!', 1)
     # all calculations should be less than 1
-    
+
     # TODO: This loop doen't do what we need it too, but will work for updating gain?
     for attribute in target_values:
         counts = target_values[attribute]
@@ -117,7 +141,7 @@ def compute_information_gain(data, split_attribute_name, target_attribute_name):
         zeros = counts[0]
         ones = counts[1]
         sum_counts = zeros + ones
-        variance_impurity = (zeros/sum_counts*ones/sum_counts)
+        variance_impurity = (zeros / sum_counts * ones / sum_counts)
         if min_impurity[1] > variance_impurity:
             min_impurity = (attribute, variance_impurity)
 
@@ -130,10 +154,3 @@ def compute_information_gain(data, split_attribute_name, target_attribute_name):
 node_dict = node_formation(training_set)
 print(node_dict)
 # TODO: Test that this output aligns with data input
-
-#print("L: {}".format(L))
-#print("K: {}".format(K))
-#print("Training Set: \n{}".format(training_set))
-#print("Validation Set: \n{}".format(validation_set))
-#print("Test Set: \n{}".format(test_set))
-#print("To Print: {}".format(str(to_print)))
