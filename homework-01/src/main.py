@@ -69,12 +69,24 @@ def node_formation(df):
 
 def calculate_variance(target_values):
     #values = list(target_values)
-    #elements,counts = #here we need a function that assigns to "element" the lists of our elements X_i
+    ##elements,counts = #here we need a function that assigns to "element" the lists of our elements X_i
                       #and to "counts" the pair [number of 0s in X_i, number of 1s in X_i]
+    #counts = [values.count(0),values.count(1)]
+    ##in the end I don't think we need the "elements" part, since everything is either 0 or 1
     #variance_impurity = 0
-    #sum_counts = _sum(counts)
+    #sum_counts = sum(counts)
     #for i in elements:
      #   variance_impurity += (-counts[i]/sum_counts*(counts[i]/sum_counts))
+        
+def variance_impurity_gain(data, split_attribute_name, target_attribute_name): #please dounble check if I used the lambda in the right way!
+    
+    #data_split = data.groupby(split_attribute_name)
+    #aggregated_data = data_split.agg({target_attribute_name : [calculate_variance, lambda x: len(x)/(len(data.index) * 1.0)] })[target_attribute_name]
+    #aggregated_data.columns = ['Variance', 'Observations']
+    #weighted_variance_impurity = sum( aggregated_data['Variance'] * aggregated_data['Observations'] )
+    #total_variance_impurity = calculate_variance(data[target_attribute_name])
+    #variance_impurity_gain = total_variance_impurity - weighted_variance_impurity
+    #return variance_impurity_gain
 
     # I attempted to rework the formula with the data that comes from node_formation
     # Please double check my math - Alexa
