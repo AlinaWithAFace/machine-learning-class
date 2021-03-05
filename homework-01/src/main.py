@@ -42,15 +42,18 @@ def node_formation(df):
 
     count_01 = {}
     # dictionary for attributes with counts as tuples (0, 1)
+    # This creates the elements, counts, feel free to pop out
     for attribute in df.loc[:, df.columns != ('Class' or '' or 'None')]:
         # loops over all attributes not identified as Class, the outcome
         zeros = (df[attribute] == 0).sum() # Turns df in True/False
         ones = (df[attribute] == 1).sum()
         count_01[attribute] = (zeros, ones)
+        # TODO: Can use this formula to get varience of Class
 
     min_variance = calculate_variance(count_01)
     # returns tuple (attribute, variance)
 
+    # TODO: Update this if/else once we know what to expect from gain and entropy
     if min_variance[1] > 0:
         branch_0 = node_formation(df[df[min_variance[0]] == 0].drop([min_variance[0]], axis=1))
         # filters df by attribute value and drops the named attribute
@@ -58,7 +61,8 @@ def node_formation(df):
         return {min_variance[0]: {0: branch_0, 1: branch_1}}
         
     else: # value was 0, set as pure_node with outcome
-        return {min_variance[0]: min_variance[1]}
+        return {min_variance[0]: {Value: 'Class', 'Class': Outcome}}
+        # TODO: need a way to capture the value and class outcome
         # pure_node is an attribute "X_"
         # leaf is 0 or 1
 
@@ -74,12 +78,13 @@ def calculate_variance(target_values):
 
     # I attempted to rework the formula with the data that comes from node_formation
     # Please double check my math - Alexa
+    # Spoiler, it isn't correct
 
-    attribute_counter = 0
     min_impurity = ('NotMe!', 1)
     # all calculations should be less than 1
+    
+    # TODO: This loop doen't do what we need it too, but will work for updating gain?
     for attribute in target_values:
-        attribute_counter += 1
         counts = target_values[attribute]
         # (0s, 1s)
         zeros = counts[0]
