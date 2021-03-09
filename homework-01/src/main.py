@@ -2,6 +2,7 @@
 
 import sys
 import pandas
+import json
 
 """
 .\program <L> <K> <training-set> <validation-set> <test-set> <to-print>
@@ -37,9 +38,13 @@ else:
 
 
 def node_formation(df):
-    # recursive function which drills down until a pure node is returned
-    # no promises, but I think this recursive structure should work
-    # drill down by keys until you find 'Class'
+    """
+    recursive function which drills down until a pure node is returned
+    no promises, but I think this recursive structure should work
+    drill down by keys until you find 'Class'
+    :param df:
+    :return:
+    """
 
     # Check current variance
     variance = variance_impurity(df)
@@ -70,14 +75,14 @@ def node_formation(df):
 
 
 def variance_impurity(df):
-    '''
+    """
     Input is dataframe, which may be subset of larger set
     VI(S) = (K0/K*K1/K)
     K0, class = 0
     K1, class = 1
     K = sum(K0 + K)
     Returns variance impurity
-    '''
+    """
 
     K0 = (df['Class'] == 0).sum()  # Turns df in True/False
     K1 = (df['Class'] == 1).sum()
@@ -102,12 +107,12 @@ def variance_impurity(df):
 
 
 def count_01s(df):
-    '''
-    Input is datafram, which may be subset of larger set
+    """
+    Input is dataframe, which may be subset of larger set
     Creates a dictionary for each remaining attributes/elements in the format
     {attribute: (zeros, ones)}
     returns dictionary
-    '''
+    """
 
     attribute_counts = {}
     # dictionary for attributes with counts as tuples (0, 1)
@@ -122,15 +127,15 @@ def count_01s(df):
 
 
 def gain(df):
-    '''
+    """
     Input df
     variance_impurity and count_01 in finding the maximum gain
     Returns the attribute/element which the highest gain
-    '''
+    """
 
     target_values = count_01s(df)
     VIS = variance_impurity(df)
-    initalize = True
+    initialize = True
 
     for attribute in target_values:
         zeros = target_values[attribute][0]
@@ -141,9 +146,9 @@ def gain(df):
         VIS1 = variance_impurity(df[df[attribute] == 1])
         gainSX = VIS - Pr0 * VIS0 - Pr1 * VIS1
 
-        if initalize == True:
+        if initialize:
             max_gain = (attribute, gainSX)
-            initalize = False
+            initialize = False
         if gainSX > max_gain[1]:
             max_gain = (attribute, gainSX)
 
@@ -157,8 +162,34 @@ def gain(df):
     return attribute, zero, one
 
 
+def print_decision_tree(layer_count, dictionary):
+    if type(dictionary) != dict:
+        # print("dictionary not a dictionary, return")
+        return
+    layer_count = layer_count + 1
+
+    for key, value in dictionary.items():
+
+        # for i in range(0, layer_count): print("| ", end="")
+
+        # print("key {} ".format(key))
+
+        if type(value) == dict:
+            for v in value:
+                print("")
+                for i in range(0, layer_count): print("| ", end="")
+                print("{} = {} : ".format(key, v), end="")
+
+                print_decision_tree(layer_count, value[v])
+        else:
+            # for i in range(0, layer_count): print("| ", end="")
+            # print("value not a dictionary, end of tree?")
+            print("{} ".format(value), end="")
+
+
 node_dict = node_formation(training_set)
-print(node_dict)
+print_decision_tree(-1, node_dict)
+
 # TODO: Test that this output aligns with data input
 
 # print("L: {}".format(L))
