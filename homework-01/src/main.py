@@ -14,7 +14,7 @@ to-print:{yes,no}
 # print(input_string)
 # inputs = input_string.split(" ")
 
-#print(sys.argv)
+# print(sys.argv)
 
 L = sys.argv[1]
 K = sys.argv[2]
@@ -54,21 +54,20 @@ def node_formation(df):
         return {'Class': class_outcome}
 
     else:
-        node_attribute, zero, one = gain(df) # returns attribute to split on, and if zero or ones were present
+        node_attribute, zero, one = gain(df)  # returns attribute to split on, and if zero or ones were present
         if zero:
             branch_0 = node_formation(df[df[node_attribute] == 0].drop([node_attribute], axis=1))
             # filters df by attribute value and drops the named attribute
         if one:
             branch_1 = node_formation(df[df[node_attribute] == 1].drop([node_attribute], axis=1))
 
-        if zero and one: # attribute contained both
+        if zero and one:  # attribute contained both
             return {node_attribute: {0: branch_0, 1: branch_1}}
         if zero:
             return {node_attribute: {0: branch_0}}
         if one:
             return {node_attribute: {1: branch_1}}
 
-        
 
 def variance_impurity(df):
     '''
@@ -80,15 +79,26 @@ def variance_impurity(df):
     Returns variance impurity
     '''
 
-    K0 = (df['Class'] == 0).sum() # Turns df in True/False
+    K0 = (df['Class'] == 0).sum()  # Turns df in True/False
     K1 = (df['Class'] == 1).sum()
     K = K0 + K1
-    variance = (K0/K*K1/K)
-    # TODO: ./main.py:86: RuntimeWarning: invalid value encountered in long_scalars
-    # I think we have to use a round function?
+
+    if K == 0:
+        # print("K is 0, returning 0")
+        return 0
+
+    K2 = K0 / K
+    # print("K2:")
+    # print(K2)
+    K3 = K1 / K
+    # print("K3:")
+    # print(K3)
+
+    variance = (K2 * K3)
+    # print("variance:")
+    # print(variance)
 
     return variance
-
 
 
 def count_01s(df):
@@ -104,12 +114,11 @@ def count_01s(df):
     # This creates the elements, counts, feel free to pop out
     for attribute in df.loc[:, df.columns != ('Class' or '' or 'None')]:
         # loops over all attributes not identified as Class, the outcome
-        zeros = (df[attribute] == 0).sum() # Turns df in True/False
+        zeros = (df[attribute] == 0).sum()  # Turns df in True/False
         ones = (df[attribute] == 1).sum()
         attribute_counts[attribute] = (zeros, ones)
 
     return attribute_counts
-
 
 
 def gain(df):
@@ -118,7 +127,7 @@ def gain(df):
     variance_impurity and count_01 in finding the maximum gain
     Returns the attribute/element which the highest gain
     '''
-    
+
     target_values = count_01s(df)
     VIS = variance_impurity(df)
     initalize = True
@@ -127,10 +136,10 @@ def gain(df):
         zeros = target_values[attribute][0]
         ones = target_values[attribute][1]
         Pr0 = zeros / (zeros + ones)
-        Pr1 = 1 - Pr0 # Using axioms, probability will sum to 1
+        Pr1 = 1 - Pr0  # Using axioms, probability will sum to 1
         VIS0 = variance_impurity(df[df[attribute] == 0])
         VIS1 = variance_impurity(df[df[attribute] == 1])
-        gainSX = VIS - Pr0*VIS0 - Pr1*VIS1
+        gainSX = VIS - Pr0 * VIS0 - Pr1 * VIS1
 
         if initalize == True:
             max_gain = (attribute, gainSX)
@@ -152,9 +161,9 @@ node_dict = node_formation(training_set)
 print(node_dict)
 # TODO: Test that this output aligns with data input
 
-#print("L: {}".format(L))
-#print("K: {}".format(K))
-#print("Training Set: \n{}".format(training_set))
-#print("Validation Set: \n{}".format(validation_set))
-#print("Test Set: \n{}".format(test_set))
-#print("To Print: {}".format(str(to_print)))
+# print("L: {}".format(L))
+# print("K: {}".format(K))
+# print("Training Set: \n{}".format(training_set))
+# print("Validation Set: \n{}".format(validation_set))
+# print("Test Set: \n{}".format(test_set))
+# print("To Print: {}".format(str(to_print)))
