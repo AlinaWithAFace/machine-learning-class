@@ -163,6 +163,12 @@ def gain(df):
 
 
 def print_decision_tree(layer_count, dictionary):
+    """
+    Recursively go through the dictionaries and print out the keys/values, adding space to every layer for a tiered visual
+    :param layer_count: the depth of the layer, initially use -1, gets added to every recursion
+    :param dictionary: the dictionary to print, might not actually be a dictionary if we're at the end of the layers
+    :return: a printed decision tree
+    """
     if type(dictionary) != dict:
         # print("dictionary not a dictionary, return")
         return
@@ -188,7 +194,9 @@ def print_decision_tree(layer_count, dictionary):
 
 
 node_dict = node_formation(training_set)
-print_decision_tree(-1, node_dict)
+
+if to_print:
+    print_decision_tree(-1, node_dict)
 
 # TODO: Test that this output aligns with data input
 
