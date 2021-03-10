@@ -197,6 +197,65 @@ node_dict = node_formation(training_set)
 
 if to_print:
     print_decision_tree(-1, node_dict)
+    
+
+tree = #build tree with gain
+tree2 = #build tree with variance_impurity
+
+def accuracy_of_the_tree(instance, tree, default=None):
+    attribute = list(tree.keys())[0]
+    if instance[attribute] in tree[attribute].keys():
+        result = tree[attribute][instance[attribute]]
+        if isinstance(result, dict): 
+            return accuracy_of_the_tree(instance, result)
+        else:
+            return result 
+    else:
+        return default
+    
+def preorder (tree, number):
+    if isinstance(tree, dict):
+        attribute = list(tree.keys())[0]
+        if tree[attribute]['number'] == number:
+            if(tree[attribute][0]!=0 and tree[attribute][0]!=1):
+                temp_tree = tree[attribute][0]
+                if isinstance(temp_tree, dict):
+                    temp_attribute = list(temp_tree.keys())[0]
+                    tree[attribute][0] = temp_tree[temp_attribute]['best_class']
+            elif(tree[attribute][1]!=0 and tree[attribute][1]!=1):
+                temp_tree = tree[attribute][1]
+                if isinstance(temp_tree, dict):
+                    temp_attribute = list(temp_tree.keys())[0]      
+                    tree[attribute][1] = temp_tree[temp_attribute]['best_class']
+        else:
+            left = tree[attribute][0]
+            right = tree[attribute][1]
+            preorder(left, number)
+            preorder(right,number)
+    return tree
+
+ 
+def post_pruning(L, K, tree):
+    best_tree = tree
+    for i in range(1, L+1) :
+        temp_tree = copy.deepcopy(best_tree)
+        M = randint(1, K);
+        for j in range(1, M+1):
+            n = #number of non-leaf nodes of temp_tree
+            if n> 0:
+                P = randint(1,n)
+            else:
+                P = 0
+            preorder(temp_tree, P)
+        test_data['accuracyBeforePruning'] = test_data.apply(accuracy_of_the_tree, axis=1, args=(best_tree,'1') ) 
+        accuracyBeforePruning = str( sum(test_data['Class']==test_data['accuracyBeforePruning'] ) / (1.0*len(test_data.index)) )
+        test_data['accuracy_after_pruning'] = test_data.apply(accuracy_of_the_tree, axis=1, args=(temp_tree,'1') ) 
+        accuracyAfterPruning = str( sum(test_data['Class']==test_data['accuracy_after_pruning'] ) / (1.0*len(test_data.index)) )
+        if accuracyAfterPruning >= accuracyBeforePruning:
+            best_tree = temp_tree
+    return best_tree
+
+
 
 # TODO: Test that this output aligns with data input
 
