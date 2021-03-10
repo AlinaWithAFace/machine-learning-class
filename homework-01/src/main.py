@@ -214,6 +214,7 @@ def accuracy_of_the_tree(instance, tree, default=None):
         return default
     
 def preorder (tree, number):
+    #this function orders the nodes in D′ from 1 to N;
     if isinstance(tree, dict):
         attribute = list(tree.keys())[0]
         if tree[attribute]['number'] == number:
