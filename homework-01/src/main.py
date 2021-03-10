@@ -199,61 +199,61 @@ if to_print:
     print_decision_tree(-1, node_dict)
     
 
-tree = #build tree with gain
-tree2 = #build tree with variance_impurity
+tree_gain = #build tree with gain
+tree_variance = #build tree with variance_impurity
 
-def accuracy_of_the_tree(instance, tree, default=None):
+def tree_accuracy(instance, tree, default_outcome=None):
     attribute = list(tree.keys())[0]
     if instance[attribute] in tree[attribute].keys():
-        result = tree[attribute][instance[attribute]]
-        if isinstance(result, dict): 
-            return accuracy_of_the_tree(instance, result)
+        outcome = tree[attribute][instance[attribute]]
+        if isinstance(outcome, dict): 
+            return tree_accuracy(instance, outcome)
         else:
-            return result 
+            return outcome
     else:
-        return default
+        return default_outcome
     
-def preorder (tree, number):
-    #this function orders the nodes in D′ from 1 to N;
+def order_the_nodes (tree, number):
+    #this function orders the nodes in the new_tree D′ from 1 to N;
     if isinstance(tree, dict):
         attribute = list(tree.keys())[0]
         if tree[attribute]['number'] == number:
             if(tree[attribute][0]!=0 and tree[attribute][0]!=1):
-                temp_tree = tree[attribute][0]
-                if isinstance(temp_tree, dict):
-                    temp_attribute = list(temp_tree.keys())[0]
-                    tree[attribute][0] = temp_tree[temp_attribute]['best_class']
+                new_tree = tree[attribute][0]
+                if isinstance(new_tree, dict):
+                    new_attribute = list(new_tree.keys())[0]
+                    tree[attribute][0] = new_tree[new_attribute]['best_class']
             elif(tree[attribute][1]!=0 and tree[attribute][1]!=1):
-                temp_tree = tree[attribute][1]
-                if isinstance(temp_tree, dict):
-                    temp_attribute = list(temp_tree.keys())[0]      
-                    tree[attribute][1] = temp_tree[temp_attribute]['best_class']
+                new_tree = tree[attribute][1]
+                if isinstance(new_tree, dict):
+                    new_attribute = list(new_tree.keys())[0]      
+                    new[attribute][1] = new_tree[new_attribute]['best_class']
         else:
             left = tree[attribute][0]
             right = tree[attribute][1]
-            preorder(left, number)
-            preorder(right,number)
+            order_the_nodes(left, number)
+            order_the_nodes(right,number)
     return tree
 
  
 def post_pruning(L, K, tree):
     best_tree = tree
     for i in range(1, L+1) :
-        temp_tree = copy.deepcopy(best_tree)
+        new_tree = copy.deepcopy(best_tree)
         M = randint(1, K);
         for j in range(1, M+1):
-            n = #number of non-leaf nodes of temp_tree
+            n = #number of non-leaf nodes of new_tree
             if n> 0:
                 P = randint(1,n)
             else:
                 P = 0
-            preorder(temp_tree, P)
-        test_data['accuracyBeforePruning'] = test_data.apply(accuracy_of_the_tree, axis=1, args=(best_tree,'1') ) 
-        accuracyBeforePruning = str( sum(test_data['Class']==test_data['accuracyBeforePruning'] ) / (1.0*len(test_data.index)) )
-        test_data['accuracy_after_pruning'] = test_data.apply(accuracy_of_the_tree, axis=1, args=(temp_tree,'1') ) 
-        accuracyAfterPruning = str( sum(test_data['Class']==test_data['accuracy_after_pruning'] ) / (1.0*len(test_data.index)) )
-        if accuracyAfterPruning >= accuracyBeforePruning:
-            best_tree = temp_tree
+            order_the_nodes(new_tree, P)
+        test_data['accuracy_before_pruning'] = test_data.apply(tree_accuracy, axis=1, args=(best_tree,'1') ) 
+        accuracy_before_pruning = str( sum(test_data['Class']==test_data['accuracy_before_pruning'] ) / (1.0*len(test_data.index)) )
+        test_data['accuracy_after_pruning'] = test_data.apply(tree_accuracy, axis=1, args=(new_tree,'1') ) 
+        accuracy_after_pruning = str( sum(test_data['Class']==test_data['accuracy_after_pruning'] ) / (1.0*len(test_data.index)) )
+        if accuracy_after_pruning >= accuracy_before_pruning:
+            best_tree = new_tree
     return best_tree
 
 
