@@ -248,10 +248,10 @@ def post_pruning(L, K, tree):
             else:
                 P = 0
             order_the_nodes(new_tree, P)
-        test_data['accuracy_before_pruning'] = test_data.apply(tree_accuracy, axis=1, args=(best_tree,'1') ) 
-        accuracy_before_pruning = str( sum(test_data['Class']==test_data['accuracy_before_pruning'] ) / (1.0*len(test_data.index)) )
-        test_data['accuracy_after_pruning'] = test_data.apply(tree_accuracy, axis=1, args=(new_tree,'1') ) 
-        accuracy_after_pruning = str( sum(test_data['Class']==test_data['accuracy_after_pruning'] ) / (1.0*len(test_data.index)) )
+        test_set['accuracy_before_pruning'] = test_set.apply(tree_accuracy, axis=1, args=(best_tree,'1') ) 
+        accuracy_before_pruning = str( sum(test_set['Class']==test_set['accuracy_before_pruning'] ) / (1.0*len(test_set.index)) )
+        test_set['accuracy_after_pruning'] = test_set.apply(tree_accuracy, axis=1, args=(new_tree,'1') ) 
+        accuracy_after_pruning = str( sum(test_set['Class']==test_set['accuracy_after_pruning'] ) / (1.0*len(test_set.index)) )
         if accuracy_after_pruning >= accuracy_before_pruning:
             best_tree = new_tree
     return best_tree
