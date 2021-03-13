@@ -3,6 +3,8 @@
 import sys
 import pandas
 import json
+from random import randint
+import copy
 
 """
 .\program <L> <K> <training-set> <validation-set> <test-set> <to-print>
