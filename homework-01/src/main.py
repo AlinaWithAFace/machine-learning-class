@@ -405,7 +405,7 @@ def number_of_internal_nodes(tree):
         attribute = list(tree.keys())[0]
         left = tree[attribute][0]
         right = tree[attribute][1]
-        return (1 + count_number_of_non_leaf_nodes(left) +  
+        return (1 + number_of_internal_nodes(left) +  
                number_of_internal_nodes(right)); 
     else:
         return 0;
