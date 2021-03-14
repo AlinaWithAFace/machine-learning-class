@@ -436,9 +436,6 @@ def post_pruning(L, K, tree):
     return best_tree
 
 
-test_set = pd.read_csv(test_set_path)
-validation_set = pd.read_csv(validation_set_path)
-
 #if to_print == 'yes':
 #    print(tree)
 #    print(tree2)
