@@ -237,6 +237,16 @@ def order_the_nodes (tree, number):
             order_the_nodes(right,number)
     return tree
 
+def number_of_internal_nodes(tree):
+    if isinstance(tree, dict):
+        attribute = list(tree.keys())[0]
+        left = tree[attribute][0]
+        right = tree[attribute][1]
+        return (1 + number_of_internal_nodes(left) +  
+               number_of_internal_nodes(right)); 
+    else:
+        return 0;
+
  
 def post_pruning(L, K, tree):
     best_tree = tree
@@ -244,7 +254,7 @@ def post_pruning(L, K, tree):
         new_tree = copy.deepcopy(best_tree)
         M = randint(1, K);
         for j in range(1, M+1):
-            n = #number of non-leaf nodes of new_tree
+            n = number_of_internal_nodes(new_tree)
             if n> 0:
                 P = randint(1,n)
             else:
@@ -257,6 +267,25 @@ def post_pruning(L, K, tree):
         if accuracy_after_pruning >= accuracy_before_pruning:
             best_tree = new_tree
     return best_tree
+
+if to_print == 'yes':
+    print(tree_gain)
+    print(tree_variance)
+   
+test_set['predicted_tree_gain'] = test_set.apply(tree_accuracy, axis=1, args=(tree_gain,'1') ) 
+print( 'Accuracy with IG algrithm ' +  (str( sum(test_set['Class']==test_set['predicted_tree_gain'] ) / (0.01*len(test_set.index)) )))
+
+
+test_set['predicted_tree_variance'] = test_set.apply(tree_accuracy, axis=1, args=(tree_variance,'1') ) 
+print( 'Accuracy with Variance Impurity algorithm ' + (str( sum(test_set['Class']==test_set['predicted_tree_variance'] ) / (0.01*len(test_set.index)) )))
+
+pruned_tree_gain = post_prune(L,K,tree_gain)
+pruned_tree_variance = post_prune(L,K,tree_variance)
+
+test_set['predicted_pruned_tree_gain'] = test_set.apply(tree_accuracy, axis=1, args=(pruned_tree_gain,'1') ) 
+print( 'Accuracy with pruned IG tree ' + (str( sum(test_set['Class']==test_set['predicted_pruned_tree_gain'] ) / (0.01*len(test_set.index)) )))
+test_set['predicted_pruned_tree_variance'] = test_set.apply(tree_accuracy, axis=1, args=(pruned_tree_variance,'1') ) 
+print( 'Accuracy with pruned Variance Impurity tree ' + (str( sum(test_set['Class']==test_set['predicted_pruned_tree_variance'] ) / (0.01*len(test_set.index)) )))
 
 
 
