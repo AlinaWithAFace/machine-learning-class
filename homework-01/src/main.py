@@ -342,8 +342,8 @@ def tree_with_ig3_algorithm(data, target_attribute_name, attribute_names, defaul
     
 
 #now I save the dictionaries of the trees built with IG3 and Variance Impurity
-tree_gain = tree_with_ig3_algorithm(training_data, 'Class', labelValues)
-tree_variance = tree_with_variance_impurity_algorithm(training_data, 'Class', labelValues)
+tree_gain = tree_with_ig3_algorithm(training_set, 'Class', labelValues)
+tree_variance = tree_with_variance_impurity_algorithm(training_set, 'Class', labelValues)
 
 #The following function computes the accuracy of the tree
 def tree_accuracy(instance, tree, default_outcome=None):
