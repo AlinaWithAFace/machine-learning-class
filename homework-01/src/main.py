@@ -417,7 +417,7 @@ def post_pruning(L, K, tree):
         new_tree = copy.deepcopy(best_tree)
         M = randint(1, K);
         for j in range(1, M+1):
-            n = count_number_of_non_leaf_nodes(new_tree)
+            n = number_of_internal_nodes(new_tree)
             if n> 0:
                 P = randint(1,n)
             else:
