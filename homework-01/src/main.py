@@ -267,9 +267,10 @@ def tree_with_variance_impurity_algorithm(data, target_attribute_name, attribute
         return default_class
 
     else:
-        variance_gain = [variance_impurity_gain(data, attribute, target_attribute_name) for attribute in
-                         attribute_names]
-        index_of_max = variance_gain.index(max(variance_gain))
+        index_of_max = list(count_set.values()).index(max(count_set.values()))
+        default_class = list(count_set.keys())[index_of_max]
+        variance_gain = [variance_impurity_gain(data, attribute, target_attribute_name) for attribute in attribute_names]
+        index_of_max = variance_gain.index(max(variance_gain)) 
         best_attribute = attribute_names[index_of_max]
 
         tree = {best_attribute: {}}
@@ -334,6 +335,8 @@ def tree_with_ig3_algorithm(data, target_attribute_name, attribute_names, defaul
         return default_class
 
     else:
+        index_of_max = list(count_set.values()).index(max(count_set.values()))
+        default_class = list(count_set.keys())[index_of_max]
         info_gain = [information_gain(data, attr, target_attribute_name) for attr in attribute_names]
         index_of_max = info_gain.index(max(info_gain))
         best_attribute = attribute_names[index_of_max]
@@ -360,10 +363,9 @@ def tree_with_ig3_algorithm(data, target_attribute_name, attribute_names, defaul
         return tree
 
 
-# now I save the dictionaries of the trees built with IG3 and Variance Impurity
+#now I save the dictionaries of the trees built with IG3 and Variance Impurity
 tree_gain = tree_with_ig3_algorithm(training_set, 'Class', labelValues)
 tree_variance = tree_with_variance_impurity_algorithm(training_set, 'Class', labelValues)
-
 
 # The following function computes the accuracy of the tree
 def tree_accuracy(instance, tree, default_outcome=None):
@@ -473,8 +475,8 @@ test_set['predicted_tree_variance'] = test_set.apply(tree_accuracy, axis=1, args
 print('Accuracy with Variance Impurity algorithm ' + (
     str(sum(test_set['Class'] == test_set['predicted_tree_variance']) / (0.01 * len(test_set.index)))))
 
-pruned_tree_gain = post_pruning(L, K, tree_gain)
-pruned_tree_variance = post_pruning(L, K, tree_variance)
+pruned_tree_gain = post_pruning(L,K,tree_gain)
+pruned_tree_variance = post_pruning(L,K,tree_variance)
 
 test_set['predicted_pruned_tree_gain'] = test_set.apply(tree_accuracy, axis=1, args=(pruned_tree_gain, '1'))
 print('Accuracy with pruned IG tree ' + (
