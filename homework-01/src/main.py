@@ -254,8 +254,8 @@ def tree_with_variance_impurity_algorithm(data, target_attribute_name, attribute
         return default_class 
     
     else:
-        index_of_max = list(count_set.values()).index(max(count_set.values())) 
-        default_class = list(count_set.keys())[index_of_max]
+        index_of_max = list(count_target_attributes.values()).index(max(count_target_attributes.values())) 
+        default_class = list(count_target_attributes.keys())[index_of_max]
         variance_gain = [variance_impurity_gain(data, attribute, target_attribute_name) for attribute in attribute_names]
         index_of_max = variance_gain.index(max(variance_gain)) 
         best_attribute = attribute_names[index_of_max]
@@ -316,8 +316,8 @@ def tree_with_ig3_algorithm(data, target_attribute_name, attribute_names, defaul
         return default_class 
     
     else:
-        index_of_max = list(count_set.values()).index(max(count_set.values())) 
-        default_class = list(count_set.keys())[index_of_max]
+        index_of_max = list(count_target_attributes.values()).index(max(count_target_attributes.values())) 
+        default_class = list(count_target_attributes.keys())[index_of_max]
         info_gain = [information_gain(data, attr, target_attribute_name) for attr in attribute_names]
         index_of_max = info_gain.index(max(info_gain)) 
         best_attribute = attribute_names[index_of_max]
