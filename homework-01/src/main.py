@@ -468,7 +468,7 @@ def post_pruning(L, K, tree):
 
 print("")
 test_set['predicted_tree_gain'] = test_set.apply(tree_accuracy, axis=1, args=(tree_gain, '1'))
-print('Accuracy with IG algrithm ' + (
+print('Accuracy with IG algorithm ' + (
     str(sum(test_set['Class'] == test_set['predicted_tree_gain']) / (0.01 * len(test_set.index)))))
 
 test_set['predicted_tree_variance'] = test_set.apply(tree_accuracy, axis=1, args=(tree_variance, '1'))
