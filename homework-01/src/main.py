@@ -216,6 +216,10 @@ if to_print:
 labelValues = list(training_set.columns.values)
 labelValues.remove('Class')
 
+n = 0
+node_number_info = 0
+node_number_variance = 0
+
 #I create two dictionaries: one for the Variance Impurity Tree and one for the IG3 Tree
 def counts_in_list(seq, return_counts=False, id=None):
    
