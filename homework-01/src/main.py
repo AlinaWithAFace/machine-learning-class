@@ -202,7 +202,7 @@ if to_print:
     
 
 #I create two dictionaries: one for the Variance Impurity Tree and one for the IG3 Tree
-labelValues = list(training_data.columns.values)
+labelValues = list(training_set.columns.values)
 labelValues.remove('Class')
 
 def counts_in_list(seq, return_counts=False, id=None):
@@ -423,8 +423,8 @@ print( 'Accuracy with IG algrithm ' +  (str( sum(test_set['Class']==test_set['pr
 test_set['predicted_tree_variance'] = test_set.apply(tree_accuracy, axis=1, args=(tree_variance,'1') ) 
 print( 'Accuracy with Variance Impurity algorithm ' + (str( sum(test_set['Class']==test_set['predicted_tree_variance'] ) / (0.01*len(test_set.index)) )))
 
-pruned_tree_gain = post_prune(L,K,tree_gain)
-pruned_tree_variance = post_prune(L,K,tree_variance)
+pruned_tree_gain = post_pruning(L,K,tree_gain)
+pruned_tree_variance = post_pruning(L,K,tree_variance)
 
 test_set['predicted_pruned_tree_gain'] = test_set.apply(tree_accuracy, axis=1, args=(pruned_tree_gain,'1') ) 
 print( 'Accuracy with pruned IG tree ' + (str( sum(test_set['Class']==test_set['predicted_pruned_tree_gain'] ) / (0.01*len(test_set.index)) )))
