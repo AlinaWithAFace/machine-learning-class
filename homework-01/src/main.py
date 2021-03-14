@@ -396,7 +396,7 @@ def order_the_nodes(tree, number):
                 new_tree = tree[attribute][1]
                 if isinstance(new_tree, dict):
                     new_attribute = list(new_tree.keys())[0]
-                    new[attribute][1] = new_tree[new_attribute]['best_class']
+                    tree[attribute][1] = new_tree[new_attribute]['best_class']
         else:
             left = tree[attribute][0]
             right = tree[attribute][1]
