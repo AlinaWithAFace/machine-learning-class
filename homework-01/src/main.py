@@ -201,9 +201,151 @@ if to_print:
     print_decision_tree(-1, node_dict)
     
 
-tree_gain = #build tree with gain
-tree_variance = #build tree with variance_impurity
+#I create two dictionaries: one for the Variance Impurity Tree and one for the IG3 Tree
+labelValues = list(training_data.columns.values)
+labelValues.remove('Class')
 
+def counts_in_list(seq, return_counts=False, id=None):
+   
+    found = set()
+    if id is None:
+        for x in seq:
+            found.add(x)
+           
+    else:
+        for x in seq:
+            x = id(x)
+            if x not in found:
+                found.add(x)
+    found = list(found)           
+    counts = [seq.count(0),seq.count(1)]
+    if return_counts:
+        return found,counts
+    else:
+        return found    
+
+#start with variance impurity tree
+def calculate_variance(target_values):
+    values = list(target_values)
+    elements,counts = counts_in_list(values,True)
+    variance_impurity = 0
+    sum_counts = sum(counts)
+    for i in elements:
+        variance_impurity += (-counts[i]/sum_counts*(counts[i]/sum_counts))
+    return variance_impurity
+
+def variance_impurity_gain(data, split_attribute_name, target_attribute_name):
+    data_split = data.groupby(split_attribute_name)
+    data_subgroup = data_split.agg({target_attribute_name : [calculate_variance, lambda x: len(x)/(len(data.index) * 1.0)] })[target_attribute_name]
+    data_subgroup.columns = ['Variance', 'Observations']
+    weighted_variance_impurity = sum( data_subgroup['Variance'] * data_subgroup['Observations'] )
+    total_variance_impurity = calculate_variance(data[target_attribute_name])
+    variance_impurity_gain = total_variance_impurity - weighted_variance_impurity
+    return variance_impurity_gain
+
+def tree_with_variance_impurity_algorithm(data, target_attribute_name, attribute_names, default_class=None):
+    node_number_variance=0
+    from collections import Counter
+    count_target_attributes = Counter(x for x in data[target_attribute_name])
+    if len(count_target_attributes) == 1:
+        return list(count_target_attributes.keys())[0]
+
+    elif data.empty or (not attribute_names):
+        return default_class 
+    
+    else:
+        variance_gain = [variance_impurity_gain(data, attribute, target_attribute_name) for attribute in attribute_names]
+        index_of_max = variance_gain.index(max(variance_gain)) 
+        best_attribute = attribute_names[index_of_max]
+        
+        tree = {best_attribute:{}}
+        Count1s = data['Class'].value_counts()[1];
+        Count0s = data['Class'].value_counts()[0];
+        if Count1s>Count0s :
+            best_class = 1
+        elif Count1s<Count0s:
+            best_class = 0
+        else:
+            best_class = 'none'
+        tree[best_attribute]['best_class'] = best_class
+        node_number_variance = node_number_variance + 1
+        tree[best_attribute]['number'] = node_number_variance
+        remaining_attribute_names = [i for i in attribute_names if i != best_attribute]
+
+        for attr_val, data_subset in data.groupby(best_attribute):
+            subtree = tree_with_variance_impurity_algorithm(data_subset,
+                        target_attribute_name,
+                        remaining_attribute_names,
+                        default_class)
+            tree[best_attribute][attr_val] = subtree
+        return tree
+
+#now I create a dictionary for the IG3 Tree
+def calculate_entropy(probablities):
+    import math
+    sum_of_probablities = 0;
+    for prob in probablities:
+        sum_of_probablities += -prob*math.log(prob, 2)
+    return sum_of_probablities
+
+def calculate_entropy_of_the_list(list):
+    from collections import Counter  
+    cnt = Counter(x for x in list)
+    num_instances = len(list)*1.0
+    probs = [x / num_instances for x in cnt.values()]
+    return calculate_entropy(probs)
+    
+def information_gain(data, split_attribute_name, target_attribute_name):
+    data_split = data.groupby(split_attribute_name) 
+    data_subgroup = data_split.agg({target_attribute_name : [calculate_entropy_of_the_list, lambda x: len(x)/(len(data.index) * 1.0)] })[target_attribute_name]
+    data_subgroup.columns = ['Entropy', 'ProbObservations']
+    new_entropy = sum( data_subgroup['Entropy'] * data_subgroup['ProbObservations'] )
+    old_entropy = calculate_entropy_of_the_list(data[target_attribute_name])
+    return old_entropy-new_entropy
+
+def tree_with_ig3_algorithm(data, target_attribute_name, attribute_names, default_class=None):
+    from collections import Counter
+    count_target_attributes = Counter(x for x in data[target_attribute_name])
+    node_position=0
+    if len(count_target_attributes) == 1:
+        return list(count_target_attributes.keys())[0]
+
+    elif data.empty or (not attribute_names):
+        return default_class 
+    
+    else:
+        info_gain = [information_gain(data, attr, target_attribute_name) for attr in attribute_names]
+        index_of_max = info_gain.index(max(info_gain)) 
+        best_attribute = attribute_names[index_of_max]
+        tree = {best_attribute:{}}
+        Count1s = data['Class'].value_counts()[1];
+        Count0s = data['Class'].value_counts()[0];
+        if Count1s>Count0s :
+            best_class = 1
+        elif Count1s<Count0s:
+            best_class = 0
+        else:
+            best_class = 'none'
+        tree[best_attribute]['best_class'] = best_class
+        node_position = node_position + 1
+        tree[best_attribute]['number'] = node_position
+        remaining_attribute_names = [i for i in attribute_names if i != best_attribute]
+
+        for attr_val, data_subset in data.groupby(best_attribute):
+            
+            subtree = tree_with_ig3_algorithm(data_subset,
+                        target_attribute_name,
+                        remaining_attribute_names,
+                        default_class)
+            tree[best_attribute][attr_val] = subtree
+        return tree
+    
+
+#now I save the dictionaries of the trees built with IG3 and Variance Impurity
+tree_gain = tree_with_ig3_algorithm(training_data, 'Class', labelValues)
+tree_variance = tree_with_variance_impurity_algorithm(training_data, 'Class', labelValues)
+
+#The following function computes the accuracy of the tree
 def tree_accuracy(instance, tree, default_outcome=None):
     attribute = list(tree.keys())[0]
     if instance[attribute] in tree[attribute].keys():
@@ -214,9 +356,11 @@ def tree_accuracy(instance, tree, default_outcome=None):
             return outcome
     else:
         return default_outcome
-    
+
+#Now I start with the pruning algorithm
+
+#This first function orders the nodes in the new_tree D′ from 1 to N;
 def order_the_nodes (tree, number):
-    #this function orders the nodes in the new_tree D′ from 1 to N;
     if isinstance(tree, dict):
         attribute = list(tree.keys())[0]
         if tree[attribute]['number'] == number:
@@ -245,9 +389,9 @@ def number_of_internal_nodes(tree):
         return (1 + number_of_internal_nodes(left) +  
                number_of_internal_nodes(right)); 
     else:
-        return 0;
+        return 0
+    
 
- 
 def post_pruning(L, K, tree):
     best_tree = tree
     for i in range(1, L+1) :
@@ -268,9 +412,9 @@ def post_pruning(L, K, tree):
             best_tree = new_tree
     return best_tree
 
-if to_print == 'yes':
-    print(tree_gain)
-    print(tree_variance)
+#if to_print_input == 'yes':
+#    print(tree_gain)
+#    print(tree_variance)
    
 test_set['predicted_tree_gain'] = test_set.apply(tree_accuracy, axis=1, args=(tree_gain,'1') ) 
 print( 'Accuracy with IG algrithm ' +  (str( sum(test_set['Class']==test_set['predicted_tree_gain'] ) / (0.01*len(test_set.index)) )))
@@ -286,6 +430,7 @@ test_set['predicted_pruned_tree_gain'] = test_set.apply(tree_accuracy, axis=1, a
 print( 'Accuracy with pruned IG tree ' + (str( sum(test_set['Class']==test_set['predicted_pruned_tree_gain'] ) / (0.01*len(test_set.index)) )))
 test_set['predicted_pruned_tree_variance'] = test_set.apply(tree_accuracy, axis=1, args=(pruned_tree_variance,'1') ) 
 print( 'Accuracy with pruned Variance Impurity tree ' + (str( sum(test_set['Class']==test_set['predicted_pruned_tree_variance'] ) / (0.01*len(test_set.index)) )))
+
 
 
 
